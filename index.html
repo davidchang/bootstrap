@@ -33,15 +33,35 @@
 	<div id="fb-root"></div>
 	<script>
 		var appID = '353110578113913';
-		var redirectURI = window.location.origin + '/social-bootstrap/bootstrap/logged-in.html';
+		var redirectURI = 'http://localhost/social-bootstrap/bootstrap/logged-in.html';
+		var php = true;
+		var channel = 'http://localhost/social-bootstrap/bootstrap/channel.php';
+		
 	  window.fbAsyncInit = function() {
 		FB.init({
 		  appId      : appID, // App ID
-		  channelUrl : './channel.php', // Channel File
+		  channelUrl : channel, // Channel File
 		  status     : true, // check login status
 		  cookie     : true, // enable cookies to allow the server to access the session
 		  xfbml      : true  // parse XFBML
 		});
+		
+		FB.getLoginStatus(function(response) {
+		  if (response.status === 'connected') {
+			// the user is logged in and has authenticated your
+			// app, and response.authResponse supplies
+			// the user's ID, a valid access token, a signed
+			// request, and the time the access token 
+			// and signed request each expire
+			var uid = response.authResponse.userID;
+			var accessToken = response.authResponse.accessToken;
+			
+			alert('redirecting to ' + redirectURI);
+			setTimeout(function() {
+				window.location = redirectURI;
+			}, 5000);
+		  }
+		 });
 	  };
 
 	  // Load the SDK Asynchronously
@@ -206,13 +226,8 @@
 						  'response_type=token'];
 				var query = queryParams.join('&');
 				var url = path + query;
-				window.open(url);
-				  
-			  e.preventDefault();
+				window.location = url;
 			});
-			/*$('#auth-logoutlink').click(function(){
-			  FB.logout();
-			});*/
 		});
 	</script>
   </body>
