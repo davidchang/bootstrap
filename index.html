@@ -4,11 +4,10 @@
     <meta charset="utf-8">
     <title>SOCIAL Bootstrap | Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Twitter SOCIAL Bootstrap - offers FB JS SDK integration with Bootstrap">
+    <meta name="author" content="David Chang">
 
     <!-- Le styles -->
-	<link href="social-bootstrap.css" rel="stylesheet">
     <link href="docs/assets/css/bootstrap.css" rel="stylesheet">
     <link href="docs/assets/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="docs/assets/css/docs.css" rel="stylesheet">
@@ -30,48 +29,39 @@
   </head>
 
   <body data-spy="scroll" data-target=".bs-docs-sidebar">
+	<script src="fb.js"></script>
 	<div id="fb-root"></div>
 	<script>
 		var appID = '353110578113913';
 		var redirectURI = 'http://localhost/social-bootstrap/bootstrap/logged-in.html';
-		var php = true;
-		var channel = 'http://localhost/social-bootstrap/bootstrap/channel.php';
 		
-	  window.fbAsyncInit = function() {
-		FB.init({
-		  appId      : appID, // App ID
-		  channelUrl : channel, // Channel File
-		  status     : true, // check login status
-		  cookie     : true, // enable cookies to allow the server to access the session
-		  xfbml      : true  // parse XFBML
-		});
-		
-		FB.getLoginStatus(function(response) {
-		  if (response.status === 'connected') {
-			// the user is logged in and has authenticated your
-			// app, and response.authResponse supplies
-			// the user's ID, a valid access token, a signed
-			// request, and the time the access token 
-			// and signed request each expire
-			var uid = response.authResponse.userID;
-			var accessToken = response.authResponse.accessToken;
-			
-			alert('redirecting to ' + redirectURI);
-			setTimeout(function() {
-				window.location = redirectURI;
-			}, 5000);
-		  }
-		 });
-	  };
+		window.fbAsyncInit = function() {
+			fb.init();
+			fb.handleLoginStatus({
+				connected : function() {
+					var counter = 10;
+					$('#secondsUntilRedirect').text(counter);
+					$('#alreadySignedInDiv').show();
 
-	  // Load the SDK Asynchronously
-	  (function(d){
-		 var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
-		 if (d.getElementById(id)) {return;}
-		 js = d.createElement('script'); js.id = id; js.async = true;
-		 js.src = "//connect.facebook.net/en_US/all.js";
-		 ref.parentNode.insertBefore(js, ref);
-	   }(document));
+					var interval = setInterval(function() {
+						$('#secondsUntilRedirect').text(--counter);
+						if(!counter) {
+							clearInterval(interval);
+							window.location = redirectURI;
+						}
+					}, 1000);
+				}
+			});
+		};
+
+		// Load the SDK Asynchronously
+		(function(d){
+			var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+			if (d.getElementById(id)) {return;}
+			js = d.createElement('script'); js.id = id; js.async = true;
+			js.src = "//connect.facebook.net/en_US/all.js";
+			ref.parentNode.insertBefore(js, ref);
+		}(document));
 	</script>
 
 
@@ -141,11 +131,14 @@
 	
     <p class="marketing-byline">Need Bootstrap with Facebook already boot-strapped? Look no further.</p>
 	
-	<div id='davidsInsert' class='row-fluid'>
-		<div id="auth-status">
-			<div id="auth-loggedout">
-				<a id="auth-loginlink" class="btn-auth btn-facebook large" href="#">Sign in with <b>Facebook</b></a>
-			</div>
+	<div id='signInDiv' class='row-fluid'>
+		<a id="loginButton" class="btn-auth btn-facebook large">Sign in with <b>Facebook</b></a>
+	</div>
+	
+	<div id='alreadySignedInDiv' class='row-fluid'>
+		<hr class="soften">
+		<div class="alert alert-info">
+			Well actually... you are already logged in. Forwarding you to the logged in page in <span id='secondsUntilRedirect'></span> seconds.
 		</div>
 	</div>
 
@@ -215,15 +208,14 @@
     <script src="docs/assets/js/bootstrap-typeahead.js"></script>
     <script src="docs/assets/js/bootstrap-affix.js"></script>
     <script src="docs/assets/js/application.js"></script>-->
+	
 	<script>
 		$(function() {
 			// respond to clicks on the login and logout links
-			$('#auth-loginlink').click(function(e){
+			$('#loginButton').click(function(e){
 			  
 				var path = 'https://www.facebook.com/dialog/oauth?';
-				var queryParams = ['client_id=' + appID, 
-						  'redirect_uri=' + redirectURI,
-						  'response_type=token'];
+				var queryParams = ['client_id=' + appID, 'redirect_uri=' + redirectURI, 'response_type=token'];
 				var query = queryParams.join('&');
 				var url = path + query;
 				window.location = url;

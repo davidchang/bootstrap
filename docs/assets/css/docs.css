@@ -5,7 +5,32 @@
   Special styles for presenting Bootstrap's documentation and examples
 */
 
-
+/* SOCIAL styles
+-------------------------------------------------- */
+#apiCall {
+	width: 100%;
+	display: block;
+	padding: 8px;
+	margin: 25px 0px 15px;
+}
+#apiCallOutput {
+	min-height: 100px;
+	width: 100%;
+}
+#notSignedInDiv {
+	padding: 8px;
+	margin-top: 20px;
+}
+#alreadySignedInDiv, #notSignedInDiv {
+	display: none;
+}
+#alreadySignedInDiv hr.soften, #notSignedInDiv hr.soften {
+	margin: 35px 0px;
+}
+#loggedInTitle, #logout {
+	margin: 15px 0px;
+	text-align: center;
+}
 
 /* Body and structure
 -------------------------------------------------- */

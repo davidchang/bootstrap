@@ -4,11 +4,10 @@
     <meta charset="utf-8">
     <title>SOCIAL Bootstrap | Logged In</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Twitter SOCIAL Bootstrap - offers FB JS SDK integration with Bootstrap">
+    <meta name="author" content="David Chang">
 
     <!-- Le styles -->
-	<link href="social-bootstrap.css" rel="stylesheet">
     <link href="docs/assets/css/bootstrap.css" rel="stylesheet">
     <link href="docs/assets/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="docs/assets/css/docs.css" rel="stylesheet">
@@ -31,61 +30,49 @@
 
   <body data-spy="scroll" data-target=".bs-docs-sidebar">
 	<div id="fb-root"></div>
+	<script src='fb.js'></script>
 	<script>
-		var appID = '353110578113913';
-		var redirectURI = 'http://localhost/social-bootstrap/bootstrap/logged-in.html';
-		var php = true;
-		var channel = 'http://localhost/social-bootstrap/bootstrap/channel.php';
-		
-	  window.fbAsyncInit = function() {
-		FB.init({
-		  appId      : appID, // App ID
-		  channelUrl : channel, // Channel File
-		  status     : true, // check login status
-		  cookie     : true, // enable cookies to allow the server to access the session
-		  xfbml      : true  // parse XFBML
-		});
-		
-		FB.getLoginStatus(function(response) {
-		  if (response.status === 'connected') {
-			// the user is logged in and has authenticated your
-			// app, and response.authResponse supplies
-			// the user's ID, a valid access token, a signed
-			// request, and the time the access token 
-			// and signed request each expire
-			var uid = response.authResponse.userID;
-			var accessToken = response.authResponse.accessToken;
+		var redirectURI = 'http://localhost/social-bootstrap/bootstrap/';
+		function notLoggedIn() {
+			var counter = 3;
+			$('#secondsUntilRedirect').text(counter);
+			$('#notSignedInDiv').show();
 			
-			FB.api('/me', function(response) {
-				document.getElementById('name').innerHTML = ', ' + response.name;
-				
-				document.getElementById('output').innerHTML = response;
-				prettyprint();
+			var interval = setInterval(function() {
+				$('#secondsUntilRedirect').text(--counter);
+				if(!counter) {
+					clearInterval(interval);
+					
+					//redirect back to the index
+					window.location = redirectURI;
+				}
+			}, 1000);
+		}
+		
+		window.fbAsyncInit = function() {
+			fb.init();
+			fb.handleLoginStatus({
+				connected : function() {
+					FB.api('/me', function(response) {
+						document.getElementById('name').innerHTML = ', ' + response.name;
+						
+						document.getElementById('apiCallOutput').innerHTML = JSON.stringify(response, null, 2);
+						prettyPrint();
+					});
+				},
+				not_authorized : notLoggedIn,
+				not_connected : notLoggedIn
 			});
-			
-		  } else if (response.status === 'not_authorized') {
-			// the user is logged in to Facebook, 
-			// but has not authenticated your app
-			
-			//redirect back to the index
-			window.location = 'http://localhost/social-bootstrap/bootstrap/';
-		  } else {
-			// the user isn't logged in to Facebook.
-			
-			//redirect back to the index
-			window.location = 'http://localhost/social-bootstrap/bootstrap/';
-		  }
-		 });
-	  };
+		};
 
-	  // Load the SDK Asynchronously
-	  (function(d){
-		 var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
-		 if (d.getElementById(id)) {return;}
-		 js = d.createElement('script'); js.id = id; js.async = true;
-		 js.src = "//connect.facebook.net/en_US/all.js";
-		 ref.parentNode.insertBefore(js, ref);
-	   }(document));
+		// Load the SDK Asynchronously
+		(function(d){
+			var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+			if (d.getElementById(id)) {return;}
+			js = d.createElement('script'); js.id = id; js.async = true;
+			js.src = "//connect.facebook.net/en_US/all.js";
+			ref.parentNode.insertBefore(js, ref);
+		}(document));
 	</script>
 
 
@@ -123,18 +110,22 @@
 
 <div class="container">
 
+	<div id='notSignedInDiv' class='row-fluid'>
+		<div class="alert alert-error">
+			Well actually... you're not logged in. Forwarding you back to the home page in <span id='secondsUntilRedirect'></span> seconds.
+		</div>
+		
+		<hr class="soften">
+	</div>
+
     <div class="row-fluid">
 		<div class="span12">
-			<h1>FB Explorer:</h1>
-		</div>
-		<div class="span12">
-			Feel free to play around and use my helper function printJSON(json):
-		</div>
-		<div class="span12">
-			<textarea>FB.api('/me', function(response) { printJSON(response); });</textarea>
-		</div>
-		<div class="span12">
-			<code class="prettyprint" id="output"></code>
+			<h2 id='loggedInTitle'>Thanks for logging in. Here's some of your Open Graph data:</h2>
+			<code id='apiCall'>FB.api('/me', function(response) { printJSON(response); });</code>
+			<pre class="prettyprint" id="apiCallOutput">Thinking...</pre>
+			<div id='logout'>
+				But if you want to log out, I understand: <a id="logoutButton" class="btn-auth btn-facebook" href="#">Log Out</a>
+			</div>
 		</div>
   </div>
 
@@ -184,29 +175,22 @@
     <script src="docs/assets/js/bootstrap-affix.js"></script>
     <script src="docs/assets/js/application.js"></script>-->
 	
-	<script> 
-     /*function displayUser(user) {
-       console.log(user);
-	   alert(user.name);
-     }
+	<!-- this is just to print the JSON for the printJSON function -->
+	<script src="json2.js"></script>
+	<script>
 
-     if (window.location.hash.length == 0) {
-       //This user doesn't belong on the logged-in.html page!
-	   alert('you dont belong here');
-     } else {
-       var accessToken = /access_token=[^&$]+/.exec(window.location.hash)[0];
-       var path = "https://graph.facebook.com/me?";
-       var queryParams = [accessToken, 'callback=displayUser'];
-       var query = queryParams.join('&');
-       var url = path + query;
-
-       // use jsonp to call the graph
-       var script = document.createElement('script');
-       script.src = url;
-       document.body.appendChild(script);        
-     }
-	 */
 	 prettyPrint();
+	 $(function() {
+		$('#logoutButton').click(function() {
+			fb.run(function() {
+				FB.logout(function(response) {
+					//redirect back to the index
+					window.location = redirectURI;
+				});
+			});
+		});
+	 });
+	 
    </script>
    
   </body>
