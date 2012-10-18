@@ -4,9 +4,13 @@ Real quick
 This is a fork of Twitter Bootstrap, but with the Facebook JSSDK included and some basic functionality contained in fb.js.
 
 I took code from the following:
+
 Twitter Bootstrap: https://github.com/twitter/bootstrap
+
 Nicholas Gallagher: https://github.com/necolas/css3-social-signin-buttons
+
 Jonathan Vanasco: http://www.destructuring.net/2011/12/08/facebook-developer-notes-javascript-sdk-and-asynchronous-woes/
+
 
 
 Quick start
@@ -51,6 +55,8 @@ Authors
 
 + http://twitter.com/davidchizzle
 + http://github.com/davidchang
+
+And the Bootstrap guys:
 
 **Mark Otto**
 
