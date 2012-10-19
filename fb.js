@@ -1,4 +1,6 @@
 //inspired and somewhat ripped off of http://www.destructuring.net/2011/12/08/facebook-developer-notes-javascript-sdk-and-asynchronous-woes/
+var root = 'http://localhost/social-bootstrap/bootstrap/';
+
 var fb = {
     _initialized : false,
 	_runOnInit: [],
@@ -9,7 +11,8 @@ var fb = {
     init : function(){
 		var appID = '353110578113913';
 		var php = true;
-		var channel = php ? 'http://localhost/social-bootstrap/bootstrap/channel.php' : 'http://localhost/social-bootstrap/bootstrap/channel.html';
+		var channel = root;
+		channel += php ? 'channel.php' : 'channel.html';
 		
         FB.init({
 		  appId      : appID, // App ID
