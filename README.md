@@ -1,6 +1,8 @@
 SOCIAL Bootstrap
 -----------
 
+NOTE: This code is hosted at davidandsuzi.com/social-bootstrap
+
 This is a fork of Twitter Bootstrap, but with the Facebook JSSDK included and some basic functionality contained in fb.js.
 
 I took code from the following:
@@ -18,14 +20,19 @@ Quick start
 
 Clone the repo, `git clone git://github.com/davidchang/bootstrap.git`
 
-In fb.js, you'll need to provide the following:
+At the top of fb.js, you'll need to provide the following:
 
-Your Facebook AppID (in fb.init): var appID = '353110578113913';
+Your Facebook AppID
 
-Whether your domain supports php (in fb.init): var php = true;
+Whether your domain supports php
 
-Your domain (under root) : var root = 'http://localhost/social-bootstrap/bootstrap/';
+Your domain
 
+```
+var root = 'http://localhost/social-bootstrap/bootstrap/';
+var appID = '353110578113913';
+var php = true;
+```
 
 Contributing
 ------------

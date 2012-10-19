@@ -1,6 +1,8 @@
 //inspired and somewhat ripped off of http://www.destructuring.net/2011/12/08/facebook-developer-notes-javascript-sdk-and-asynchronous-woes/
 var root = 'http://localhost/social-bootstrap/bootstrap/';
-
+var appID = '353110578113913';
+var php = true;
+		
 var fb = {
     _initialized : false,
 	_runOnInit: [],
@@ -9,8 +11,6 @@ var fb = {
     },
     // wrap all our facebook init stuff within a function that runs post async, but is cached across the site
     init : function(){
-		var appID = '353110578113913';
-		var php = true;
 		var channel = root;
 		channel += php ? 'channel.php' : 'channel.html';
 		
